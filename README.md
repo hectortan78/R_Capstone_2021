@@ -269,4 +269,29 @@ To visualize the OLS regression analysis performed above, we stored the OLS regr
 ![part3](https://user-images.githubusercontent.com/41586829/197403432-f03487d1-51ae-4aab-b77d-cb60269002eb.JPG)
 ![part3_](https://user-images.githubusercontent.com/41586829/197403449-81366a6e-c9ee-4125-82a4-13517805a265.png)
 
-  #no interaction effect of other variables on Webtrend_Hits
+ ---No interaction effect of other variables on Webtrend_Hits
+
+-------
+# Interpretation of the Results
+From our data science project, we could find the following two findings:
+
+# From our Visualizations
+
+Sentiments signified by web searches and youtube searches, together with speculative forces caused by influential individual tweeting on crypto, seem to collectively have a positive relationship with the trading activity of crypto, whilst the value of the USD index and RMB index seem to be a inverse relationships on the trading activity of crypto. The prices of GOLD too, looks to have a positive relationship on trading interest around crypto. This is shown by our visualization in row 457.
+
+# From our Main Effects Model
+
+However, from our modeling, it was shown that only USD index, RMB index, and web searches on crypto have a significant relationship with crypto trading volume (row 514). For RMB Index, our hypothesis that a decreasing value of RMB would push investors to store their wealth in alternative investments like crypto as a hedge. This was supported by our model as well as our visualization in row 457. What was odd was that we believed this would be the same trend for USDX index. However, this was not the case in our model, as the model estimate for USDX index was positive, despite a negative correlation seen in visualization in row 457. For web searches, it was also logical that increased searches would be positively correlated with crypto trading volume. The fact that web searches had a correlation with crypto trading volume and not youtube searches or sentiments on twitter, suggested that the web still remains as a more prominent source of crypto information. For gold price, our hypothesis was that there would be a negative correlation with crypto as bitcoin is largely seen as digital gold and is believed to cannibalize on the gold market. However this does not appear to be the case.
+
+# Implications
+It is likely that the Federal Reserve’s monetary policies had any some effect on Tweet sentiments and social media chatter. However there is a significant effect of USDX on crypto interest and trading activity, but in a counterintuitive manner where a decrease in USD index is correlated with a decrease crypto trading volume. This could suggest that the FED’s monetary policies did not spur interest in cryptos. The FED can be assured that cryptocurrency in the current climate is unlikely to overtake or replace the value of the USD as they are not inversely correlated.
+
+# Limitations and Future Directions
+One of the limitations we faced was the inability to obtain a comprehensive dated set of Twitter data from the handles of media news outlets. Reason being the volume of tweets for media news outlets was frequently high. Hence the desired start date of tweet data mining was limited by the cap of 3,200 tweets allowed for data pulling imposed by the twitter API.
+
+Furthermore, our studies only look at correlation and not causality.
+
+Additional studies need to be conducted to to determine causation, such as the application of statistical procedures like Difference in Differences (DID), Causal Impact, or Synthetic Control.
+
+# References
+Yahoo Finance Gtrends Twitter Bloomberg Press Gazette CityAM London Post
