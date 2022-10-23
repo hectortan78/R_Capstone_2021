@@ -169,3 +169,49 @@ For the preparation of the model:
 ## USDX_Index-       100  0.89  0.88  0.90   0.83  2.0e+00  1
 ## RMB_Index-         98  0.91  0.90  0.91   0.85  2.0e+00  1
 ## Gold_Price        100  0.64  0.61  0.56   0.47 -4.2e-16  1
+
+-----
+## Model model regressed GOLD, RMB, USDX, web search queries (Gtrends hits), tweet volume and youtube searches (Youtube search queries) onto trade volume of crypto.
+
+All components of gvlma has acceptable assumptions.
+![model_ regressed GOLD, RMB, USDX, web search queries (Gtrends hits), tweet volume and youtube searches (Youtube search queries) onto trade volume of crypto](https://user-images.githubusercontent.com/41586829/197402275-17a4d9f1-95e5-4c7e-8c46-d3030aab21d4.png)
+
+## All components passed
+Model has an r^2 that is high (>0.85) with the estimate +/- CI of the model not include 0.
+
+It appears that only RMB, USDX and web search queries display significant effects on the trading activity of crypto.
+## # A tibble: 7 x 5
+##   term              estimate std.error statistic p.value
+##   <chr>                <dbl>     <dbl>     <dbl>   <dbl>
+## 1 (Intercept)         0.205     0.0840     2.43  0.0196 
+## 2 Tweet_Sentiments    0.0123    0.0657     0.187 0.853  
+## 3 Webtrend_Hits       0.625     0.270      2.31  0.0260 
+## 4 Youtubetrend_Hits   0.356     0.263      1.36  0.183  
+## 5 USDX_Index          0.673     0.214      3.15  0.00310
+## 6 RMB_Index          -0.447     0.207     -2.16  0.0368 
+## 7 Gold_Price          0.257     0.149      1.73  0.0922
+## # A tibble: 1 x 12
+##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+##       <dbl>         <dbl> <dbl>     <dbl>    <dbl> <dbl>  <dbl> <dbl> <dbl>
+## 1     0.874         0.854 0.399      44.9 5.18e-16     6  -19.2  54.4  69.0
+## # ... with 3 more variables: deviance <dbl>, df.residual <int>, nobs <int>
+  
+  
+Model 1
+(Intercept)	0.205 * 
+[0.035, 0.375]  
+Tweet_Sentiments	0.012   
+[-0.121, 0.145]  
+Webtrend_Hits	0.625 * 
+[0.079, 1.171]  
+Youtubetrend_Hits	0.356   
+[-0.176, 0.888]  
+USDX_Index	0.673 **
+[0.241, 1.105]  
+RMB_Index	-0.447 * 
+[-0.865, -0.029]  
+Gold_Price	0.257   
+[-0.044, 0.557]  
+N	46       
+R2	0.874   
+*** p < 0.001; ** p < 0.01; * p < 0.05.
