@@ -6,6 +6,7 @@ Observing Interplay Between Cryptocurrencies Trading Activity, Market Sentiments
 
 # Code and Resources Used
 R Studio Version: Version 1.4.1103
+
 Packages: tidyverse, quantmod, rtweet, gtrendsR, lubridate, psych, jtools, RedditExtractoR, rvest, broom, gvlma, ggfortify, tidytext, ggstatsplot, reshape2, interactions, equatiomatic, sandwich, textdata
 
 
