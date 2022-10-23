@@ -219,21 +219,11 @@ R2	0.874
 ## Visualization of the Model ----
 ![visualization_of_the_model](https://user-images.githubusercontent.com/41586829/197402579-ad0db875-109a-4332-a2c3-51e8b2bc3681.png)
                                        
-# Assess Multicollinearity ----
+## Assess Multicollinearity ----
 
-summ(model_allin, scale = T, vifs = T, confint = T , digits = 4)
-Observations	46 (55 missing obs. deleted)
-Dependent variable	Trade_Volume
-Type	OLS linear regression
-F(6,39)	44.9334
-R²	0.8736
-Adj. R²	0.8542
-Est.	2.5%	97.5%	t val.	p	VIF
-(Intercept)	0.5382	0.4193	0.6572	9.1509	0.0000	NA
-Tweet_Sentiments	0.0121	-0.1186	0.1427	0.1868	0.8528	1.1801
-Webtrend_Hits	0.6351	0.0801	1.1901	2.3147	0.0260	21.2887
-Youtubetrend_Hits	0.4062	-0.2001	1.0125	1.3552	0.1832	25.4068
-USDX_Index	0.7318	0.2624	1.2012	3.1533	0.0031	15.2301
-RMB_Index	-0.4722	-0.9138	-0.0305	-2.1626	0.0368	13.4795
-Gold_Price	0.1827	-0.0313	0.3967	1.7265	0.0922	3.1660
-Standard errors: OLS; Continuous predictors are mean-centered and scaled by 1 s.d.
+![assess_multicollinearity](https://user-images.githubusercontent.com/41586829/197402653-7e16544a-7847-48eb-b542-8229a79d4906.JPG)
+
+# Webtrend_Hits, Youtubetrend_Hits, USDX_Index, RMB_Index all have high VIF values of > 10 indicating high multicolinearity. We will be probing for interaction effects from these variables. 
+  
+  
+  Trade_Volume=α+β1(Tweet_Sentiments)+β2(Webtrend_Hits)+β3(Youtubetrend_Hits)+β4(USDX_Index)+β5(RMB_Index)+β6(Gold_Price)+ϵ
