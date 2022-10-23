@@ -4,6 +4,9 @@ Observing Interplay Between Cryptocurrencies Trading Activity, Market Sentiments
 - To discern if the volume of cryptocurrency trading activity is directly or indirectly affected by social media buzz and influencers
 - Scraped gTrends, Yahoo, Reddit, Twitter
 
+# Code and Resources Used
+R Studio Version: Version 1.4.1103
+Packages: tidyverse, quantmod, rtweet, gtrendsR, lubridate, psych, jtools, RedditExtractoR, rvest, broom, gvlma, ggfortify, tidytext, ggstatsplot, reshape2, interactions, equatiomatic, sandwich, textdata
 
 
 ## Problem Statement
