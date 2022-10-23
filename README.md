@@ -126,10 +126,11 @@ We combined all the variables into one dataset and normalized the values for con
 ## Model preparation
 For the preparation of the model:
 
-Reliability test using Cronbach’s Alpha - Poor raw_alpha but good std.alpha (alpha > 0.7)
-
-Correlational matrix - Generally high r values
+- Reliability test using Cronbach’s Alpha - Poor raw_alpha but good std.alpha (alpha > 0.7)
+- Correlational matrix - Generally high r values
 ------
+
+## Poor raw_alpha but good std.alpha (alpha > 0.7, except Tweet_Sentiments, Gold_Price)
 
 ## 
 ## Reliability analysis   
