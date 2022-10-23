@@ -253,22 +253,16 @@ To visualize the OLS regression analysis performed above, we stored the OLS regr
 ![part2_Plot Interaction (Tweet_Volume)](https://user-images.githubusercontent.com/41586829/197403224-2380dd31-2b45-4dbb-9b7a-3c20dece3aaa.png)
 
 Run Simple Slopes Analysis ----
-## SIMPLE SLOPES ANALYSIS 
-## 
-## Slope of USDX_Index when Tweet_Sentiments = -0.93 (- 1 SD): 
-## 
-##   Est.   S.E.   t val.      p
-## ------ ------ -------- ------
-##   0.52   0.31     1.70   0.10
-## 
-## Slope of USDX_Index when Tweet_Sentiments =  0.06 (Mean): 
-## 
-##   Est.   S.E.   t val.      p
-## ------ ------ -------- ------
-##   0.67   0.30     2.23   0.03
-## 
-## Slope of USDX_Index when Tweet_Sentiments =  1.04 (+ 1 SD): 
-## 
-##   Est.   S.E.   t val.      p
-## ------ ------ -------- ------
-##   0.82   0.31     2.66   0.01
+ ![part2_simple_slopes_analysis](https://user-images.githubusercontent.com/41586829/197403297-8d993c6d-1578-470a-b474-8438ab82eb36.JPG)
+
+When Tweet_Sentiments is high, there is significant effect of USDX_Index on Trade_Volume
+
+Spotlight Analysis ---- 
+  ![part2_spotlight_analysis_using_johnson_neyman](https://user-images.githubusercontent.com/41586829/197403335-0c057915-18b2-47f6-9467-628a94f79ecb.JPG)
+
+  Run interaction_plot() again by adding benchmark for regions of significance
+  ![part2_run_interaction_plot_again_by_adding_benchmark_for_regions_of_significance](https://user-images.githubusercontent.com/41586829/197403370-fde97da6-aeb3-490b-9229-2d702ec8abee.png)
+
+# Part 3 Webtrend_Hits * (Gold_Price + RMB_Index + USDX_Index + Youtubetrend_Hits + Tweet_Sentiments)
+  
+To visualize the OLS regression analysis performed above, we stored the OLS regression model’s predictions. The analysis showed that the other variables had no interaction effect with Webtrend_Hits.
