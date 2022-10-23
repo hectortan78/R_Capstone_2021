@@ -38,7 +38,7 @@ The Firm chose a 23-month time period as July 2019 is the earliest time period w
 During the course of the data mining and analysis, The Firm discovered/faced some constraints to the data available, which contributed to a lack of data points for a robust analysis. This will be elaborated further below.
 
 
-##Data sets that were obtained:
+## Data sets that were obtained:
 
   1. Data on Crypto Trading
   
