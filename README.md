@@ -238,53 +238,9 @@ Based on this we shortlisted the variables that display significant effects, and
 
 To visualize the OLS regression analysis performed above, we stored the OLS regression model’s predictions. The analysis showed that the other variables had no interaction effect with RMB_Index.
   
-  ## # A tibble: 12 x 5
-##    term                        estimate std.error statistic p.value
-##    <chr>                          <dbl>     <dbl>     <dbl>   <dbl>
-##  1 (Intercept)                   0.118     0.256      0.461  0.648 
-##  2 RMB_Index                    -0.241     0.338     -0.714  0.480 
-##  3 Webtrend_Hits                 0.700     0.780      0.898  0.376 
-##  4 Youtubetrend_Hits             0.335     0.889      0.377  0.708 
-##  5 Tweet_Sentiments              0.0642    0.0788     0.815  0.421 
-##  6 USDX_Index                    0.665     0.249      2.67   0.0116
-##  7 Gold_Price                    0.367     0.161      2.28   0.0291
-##  8 RMB_Index:Webtrend_Hits       0.351     0.538      0.653  0.518 
-##  9 RMB_Index:Youtubetrend_Hits  -0.337     0.601     -0.562  0.578 
-## 10 RMB_Index:Tweet_Sentiments    0.124     0.0679     1.82   0.0772
-## 11 RMB_Index:USDX_Index         -0.0322    0.168     -0.191  0.850 
-## 12 RMB_Index:Gold_Price         -0.227     0.210     -1.08   0.288
-## # A tibble: 1 x 12
-##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
-##       <dbl>         <dbl> <dbl>     <dbl>    <dbl> <dbl>  <dbl> <dbl> <dbl>
-## 1     0.890         0.854 0.399      24.9 4.14e-13    11  -16.1  58.1  81.9
-## # ... with 3 more variables: deviance <dbl>, df.residual <int>, nobs <int>
+![part1](https://user-images.githubusercontent.com/41586829/197403085-0d07c297-e542-455f-8c47-7f3f66905888.JPG)
+
+![part1_](https://user-images.githubusercontent.com/41586829/197403089-f7fd02bf-fa42-4bc1-9887-c24d3594b72d.JPG)
+![visualization_of_the_model_part1](https://user-images.githubusercontent.com/41586829/197403112-a31daa15-4b02-4c39-8b75-0f02b20f1227.png)
 
   
-Model 1
-(Intercept)	0.118  
-[-0.402, 0.638] 
-RMB_Index	-0.241  
-[-0.927, 0.445] 
-Webtrend_Hits	0.700  
-[-0.885, 2.286] 
-Youtubetrend_Hits	0.335  
-[-1.471, 2.141] 
-Tweet_Sentiments	0.064  
-[-0.096, 0.224] 
-USDX_Index	0.665 *
-[0.159, 1.172] 
-Gold_Price	0.367 *
-[0.040, 0.694] 
-RMB_Index:Webtrend_Hits	0.351  
-[-0.742, 1.443] 
-RMB_Index:Youtubetrend_Hits	-0.337  
-[-1.558, 0.883] 
-RMB_Index:Tweet_Sentiments	0.124  
-[-0.014, 0.262] 
-RMB_Index:USDX_Index	-0.032  
-[-0.374, 0.310] 
-RMB_Index:Gold_Price	-0.227  
-[-0.655, 0.201] 
-N	46      
-R2	0.890  
-*** p < 0.001; ** p < 0.01; * p < 0.05.
