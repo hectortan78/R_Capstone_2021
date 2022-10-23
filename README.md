@@ -123,9 +123,48 @@ We combined all the variables into one dataset and normalized the values for con
 ![visualization_checking_for_relationshsip_between_variables](https://user-images.githubusercontent.com/41586829/197401484-4c915d63-4201-4a67-9880-3291db088300.png)
 
 
-## Modelling
-
-# Model preparation
+## Model preparation
 For the preparation of the model:
+
 Reliability test using Cronbach’s Alpha - Poor raw_alpha but good std.alpha (alpha > 0.7)
+
 Correlational matrix - Generally high r values
+------
+
+## 
+## Reliability analysis   
+## Call: alpha(x = ., check.keys = TRUE)
+## 
+##   raw_alpha std.alpha G6(smc) average_r S/N   ase mean   sd median_r
+##       0.88      0.88    0.93      0.52 7.7 0.017 0.58 0.77     0.55
+## 
+##  lower alpha upper     95% confidence boundaries
+## 0.85 0.88 0.92 
+## 
+##  Reliability if an item is dropped:
+##                   raw_alpha std.alpha G6(smc) average_r  S/N alpha se var.r
+## Trade_Volume           0.85      0.85    0.91      0.49  5.7    0.023 0.078
+## Tweet_Sentiments       0.92      0.92    0.95      0.64 10.8    0.014 0.038
+## Webtrend_Hits          0.87      0.87    0.92      0.53  6.6    0.020 0.074
+## Youtubetrend_Hits      0.84      0.84    0.89      0.46  5.2    0.025 0.064
+## USDX_Index-            0.85      0.85    0.89      0.48  5.6    0.023 0.072
+## RMB_Index-             0.84      0.84    0.90      0.47  5.4    0.024 0.067
+## Gold_Price             0.89      0.89    0.93      0.58  8.3    0.017 0.066
+##                   med.r
+## Trade_Volume       0.52
+## Tweet_Sentiments   0.69
+## Webtrend_Hits      0.52
+## Youtubetrend_Hits  0.52
+## USDX_Index-        0.41
+## RMB_Index-         0.41
+## Gold_Price         0.64
+## 
+##  Item statistics 
+##                     n raw.r std.r r.cor r.drop     mean sd
+## Trade_Volume      101  0.85  0.86  0.85   0.80 -1.6e-17  1
+## Tweet_Sentiments   48  0.43  0.43  0.30   0.26  1.2e-18  1
+## Webtrend_Hits     100  0.75  0.76  0.73   0.66  1.4e-17  1
+## Youtubetrend_Hits  99  0.92  0.93  0.95   0.90  4.9e-17  1
+## USDX_Index-       100  0.89  0.88  0.90   0.83  2.0e+00  1
+## RMB_Index-         98  0.91  0.90  0.91   0.85  2.0e+00  1
+## Gold_Price        100  0.64  0.61  0.56   0.47 -4.2e-16  1
