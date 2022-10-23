@@ -89,3 +89,7 @@ We then ran a quick visualization to get a sensing of the data.
   
   We then sought to do a web scraping of reddit. We identified a thread on the "CryptoCurrency" subreddit, called "Daily Discussion" which is posted daily and has a high number of comments. Here is an example of the url "https://www.reddit.com/r/CryptoCurrency/comments/ol553c/daily_discussion_july_16_2021_gmt0/". On the surface, it seemed that it would be a good candidate since we can create a staging table and loop through the month, day, and year. However, there is a random string of alphanumeric characters within "...comments/XXXXX/daily_discussion..." which prevented this. Hence, the reddit dataset was also dropped. 
 
+## Quick visualization - Cryto and USDX
+![quickvisualization_crypto_usdx](https://user-images.githubusercontent.com/41586829/197400878-2a7a30e6-4ab2-458d-bce1-e1217b339baa.png)
+
+
