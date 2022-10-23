@@ -243,4 +243,32 @@ To visualize the OLS regression analysis performed above, we stored the OLS regr
 ![part1_](https://user-images.githubusercontent.com/41586829/197403089-f7fd02bf-fa42-4bc1-9887-c24d3594b72d.JPG)
 ![visualization_of_the_model_part1](https://user-images.githubusercontent.com/41586829/197403112-a31daa15-4b02-4c39-8b75-0f02b20f1227.png)
 
+# Part 2: USDX_Index * (Gold_Price + RMB_Index + Webtrend_Hits + Youtubetrend_Hits + Tweet_Sentiments)
   
+To visualize the OLS regression analysis performed above, we stored the OLS regression model’s predictions. THe analysis showed that there was an interaction effect between Tweet_Sentiments and USDX_Index. However on further probing, at all values of USDX_Index, there was no interaction effect of Tweet_Sentiments.
+  
+![part2](https://user-images.githubusercontent.com/41586829/197403215-f2e96726-8772-424a-8225-a1fdb66eaf8e.JPG)
+![part2_](https://user-images.githubusercontent.com/41586829/197403221-ff9e554c-74e4-4308-934f-813ef8349420.png)
+  
+![part2_Plot Interaction (Tweet_Volume)](https://user-images.githubusercontent.com/41586829/197403224-2380dd31-2b45-4dbb-9b7a-3c20dece3aaa.png)
+
+Run Simple Slopes Analysis ----
+## SIMPLE SLOPES ANALYSIS 
+## 
+## Slope of USDX_Index when Tweet_Sentiments = -0.93 (- 1 SD): 
+## 
+##   Est.   S.E.   t val.      p
+## ------ ------ -------- ------
+##   0.52   0.31     1.70   0.10
+## 
+## Slope of USDX_Index when Tweet_Sentiments =  0.06 (Mean): 
+## 
+##   Est.   S.E.   t val.      p
+## ------ ------ -------- ------
+##   0.67   0.30     2.23   0.03
+## 
+## Slope of USDX_Index when Tweet_Sentiments =  1.04 (+ 1 SD): 
+## 
+##   Est.   S.E.   t val.      p
+## ------ ------ -------- ------
+##   0.82   0.31     2.66   0.01
