@@ -266,3 +266,7 @@ Spotlight Analysis ----
 # Part 3 Webtrend_Hits * (Gold_Price + RMB_Index + USDX_Index + Youtubetrend_Hits + Tweet_Sentiments)
   
 To visualize the OLS regression analysis performed above, we stored the OLS regression model’s predictions. The analysis showed that the other variables had no interaction effect with Webtrend_Hits.
+![part3](https://user-images.githubusercontent.com/41586829/197403432-f03487d1-51ae-4aab-b77d-cb60269002eb.JPG)
+![part3_](https://user-images.githubusercontent.com/41586829/197403449-81366a6e-c9ee-4125-82a4-13517805a265.png)
+
+  #no interaction effect of other variables on Webtrend_Hits
