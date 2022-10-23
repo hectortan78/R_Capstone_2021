@@ -42,7 +42,7 @@ Data sets that were obtained:
 
   1. Data on Crypto Trading
   
-    Data on the top 5 cryptos were pulled from Yahoo Finance using the quantmod package. Looking at the data pulled, we found that volume traded for BTC and ETH were significantly higher than BNB, ADA, and XRP. Hence, we focused only on BTC and ETH. 
+  Data on the top 5 cryptos were pulled from Yahoo Finance using the quantmod package. Looking at the data pulled, we found that volume traded for BTC and ETH were significantly higher than BNB, ADA, and XRP. Hence, we focused only on BTC and ETH. 
   
   2. Data on the Value of USD
   
