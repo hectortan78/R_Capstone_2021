@@ -89,7 +89,36 @@ We then ran a quick visualization to get a sensing of the data.
   
   We then sought to do a web scraping of reddit. We identified a thread on the "CryptoCurrency" subreddit, called "Daily Discussion" which is posted daily and has a high number of comments. Here is an example of the url "https://www.reddit.com/r/CryptoCurrency/comments/ol553c/daily_discussion_july_16_2021_gmt0/". On the surface, it seemed that it would be a good candidate since we can create a staging table and loop through the month, day, and year. However, there is a random string of alphanumeric characters within "...comments/XXXXX/daily_discussion..." which prevented this. Hence, the reddit dataset was also dropped. 
 
-## Quick visualization - Cryto and USDX
+## Quick visualization - Crypto and USDX
+Quick look at cryptocurreny trading volume and value of USD
 ![quickvisualization_crypto_usdx](https://user-images.githubusercontent.com/41586829/197400878-2a7a30e6-4ab2-458d-bce1-e1217b339baa.png)
 
+Quick look at the tweet volumes of cryptocurrency influencers
+
+![quickvisualization_cryptoinfluencertweets](https://user-images.githubusercontent.com/41586829/197401058-4c335587-8a62-43c4-8dbc-7af4be9d53f0.png)
+
+## Tidy & Transform
+
+Tidied the shortlisted three data sets. Largely, tidying the data by grouped them by months and filtered for Jan 20 to May 21. Individual data sets for BTC and ETH were also combined.
+
+For the twitter data sets. This was where we realized some of its additional deficiencies, such a few mentions of our key words, “bitcoin, btc, ethereum, eth” and that the tweets don’t go back far enough.
+
+
+## Visualization
+Running a general visualization, we can see that there seems to be a possible positive relationship between the rising sentiment activity in tweets, web searches and youtube searches on the trading activity of crypto. The rising price of gold, and weakening of the USD and RMB values seem to go hand in hand with the increased trading interest in crypto.
+
+We combined all the variables into one dataset and normalized the values for consistency.
+![visualization_cryptotrading_and_ tweets, web searches and youtube](https://user-images.githubusercontent.com/41586829/197401255-480ecc58-bd1c-4513-83bf-85be5fca8b16.png)
+
+![visualization_cryptotrading_and_usdtrading](https://user-images.githubusercontent.com/41586829/197401286-c6af59c8-9249-431c-b43d-84e77d89cd95.png)
+
+![visualization_cryptotrading_and_tweets,gtrends](https://user-images.githubusercontent.com/41586829/197401366-8c652f2b-d33f-4686-ba2f-f1f0f5bbf799.png)
+
+![visualization_inverserelationship](https://user-images.githubusercontent.com/41586829/197401391-d51052ba-3e57-48e8-aaca-fa3600376453.png)
+
+#### Additional Cleaning and Visualization ----
+
+![visualization_cryptotrades_and_othervariables](https://user-images.githubusercontent.com/41586829/197401443-e13b5d33-cca9-4d97-8c7c-fc2adab0ab6f.png)
+
+![visualization_checking_for_relationshsip_between_variables](https://user-images.githubusercontent.com/41586829/197401484-4c915d63-4201-4a67-9880-3291db088300.png)
 
