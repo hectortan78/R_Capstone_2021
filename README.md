@@ -223,7 +223,14 @@ R2	0.874
 
 ![assess_multicollinearity](https://user-images.githubusercontent.com/41586829/197402653-7e16544a-7847-48eb-b542-8229a79d4906.JPG)
 
-# Webtrend_Hits, Youtubetrend_Hits, USDX_Index, RMB_Index all have high VIF values of > 10 indicating high multicolinearity. We will be probing for interaction effects from these variables. 
+Webtrend_Hits, Youtubetrend_Hits, USDX_Index, RMB_Index all have high VIF values of > 10 indicating high multicolinearity. We will be probing for interaction effects from these variables. 
   
   
   Trade_Volume=α+β1(Tweet_Sentiments)+β2(Webtrend_Hits)+β3(Youtubetrend_Hits)+β4(USDX_Index)+β5(RMB_Index)+β6(Gold_Price)+ϵ
+![probing for interaction effects](https://user-images.githubusercontent.com/41586829/197402852-a807265c-12d9-4800-9fc1-f179a732b315.JPG)
+
+  ![probing for interaction effects 1](https://user-images.githubusercontent.com/41586829/197402911-0e549dfe-76da-424d-913f-ab35c3c570b4.JPG)
+
+  
+Based on this we shortlisted the variables that display significant effects, and probed for interaction effects between them, namely RMB_Index, USDX_Index, and Webtrend_Hits on the rest of our variables individually. This is reflected in Parts 1-3 respectively.
+  
