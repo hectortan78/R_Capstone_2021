@@ -116,9 +116,16 @@ We combined all the variables into one dataset and normalized the values for con
 
 ![visualization_inverserelationship](https://user-images.githubusercontent.com/41586829/197401391-d51052ba-3e57-48e8-aaca-fa3600376453.png)
 
-#### Additional Cleaning and Visualization ----
+## Additional Cleaning and Visualization ----
 
 ![visualization_cryptotrades_and_othervariables](https://user-images.githubusercontent.com/41586829/197401443-e13b5d33-cca9-4d97-8c7c-fc2adab0ab6f.png)
 
 ![visualization_checking_for_relationshsip_between_variables](https://user-images.githubusercontent.com/41586829/197401484-4c915d63-4201-4a67-9880-3291db088300.png)
 
+
+## Modelling
+
+# Model preparation
+For the preparation of the model:
+Reliability test using Cronbach’s Alpha - Poor raw_alpha but good std.alpha (alpha > 0.7)
+Correlational matrix - Generally high r values
