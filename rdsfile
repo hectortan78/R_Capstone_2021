@@ -1,0 +1,746 @@
+---
+title: Observing Interplay Between Cryptocurrencies Trading Activity, Market Sentiments,
+  and US Fiscal Stimulus
+author: "Hector Tan, Nicholas Tan"
+date: "27 Jun 21"
+output:
+  html_document:
+    prettydoc::html_pretty:
+      theme: architect
+    highlight: espresso
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+    number_sections: no
+  pdf_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{css, echo = F}
+h1 { color: rgb(62, 6, 148); }
+h2 { color: rgb(0, 104, 139); } 
+h3 { color: rgb(51, 122, 183); }
+body {font-family:  -apple-system, BlinkMacSystemFont; 
+      font-size: 12pt; }
+code { color: rgb(205,79,57) }
+```
+
+## Problem Statement
+
+#Background 
+
+Cryptocurrency (cryptos) was first conceptualised in 2008 with the advent of blockchain. Industry pundits touted the first cryptocurrency, bitcoin, as the future of money. Despite the numerous research and white papers around bitcoin as a gamechanger, interest in cryptos remained lukewarm in the years that followed. Bitcoin is notorious for its volatility. Prices rose to a high of USD18,0000 per coin in 2018, and very quickly fell to an adjusted price of USD3,400. Average price of bitcoin subsequently hovered at an average of around USD7,500 for the most part of 2018 to 2019. 
+
+Fast forward to the start of 2020, and the prices for bitcoin began to rise in earnest. The price for a bitcoin averaged at USD8,300 in Jan 2020. By Dec 2020, this figure had risen to a whopping average of USD20,000. The perceived value of bitcoin was exacerbated by the COVID19 virus which began its rampage across the world with market lockdowns and social distancing restrictions, further encouraging positive sentiments for digital transactions and technology that enabled contactless forms of interactions between humans.
+
+At around the same time, the US Federal reserve announced a Covid-19 stimulus and relief package, sometime during Mar 2020. This package involved the printing of trillions of USD which is believed to have resulted in the gradual decline of the USD Index. The US Federal Reserve has been tasked by the US government to find out if there is a possible relation between these events, i.e. the decreasing value of USDX which subsequently led to the rise in trading activity, or interest, for cryptocurrency.
+
+#Narrative
+
+This is an area of concern as exuberant cashflows  into crypto currency would diminish the Federal Reserve’s ability to regulate the economy.  Hence, the US Federal Reserve tasked The Firm to look into this issue. 
+
+At quick glance of the dating sequence of events, The Firm hypothesized that the fall in USD Index may have indeed resulted in an increased interest in cryptos trading as the USD value’s decline seemed to coincide with the increase in cryptos trading activity. It is also logical to believe that market sentiment or general knowledge of cryptos had a correlation with its trading activity. The Firm decided to approach the matter by studying these two phenomena and how they interplay with crypto trading: 
+
+  - Market sentiments - this is defined by user generated interest as well as word-of-mouth conversations         around cryptocurrency. 
+          + User search queries in search engines i.e. gTrends data
+          + Social hype caused by word-of-mouth due to the media news and influential individuals i.e. Twitter             data
+          + Talks and sentiments in forums i.e. Reddit
+
+  - Value of the US Dollar - this will be measured and defined according to the USD Index (USDX), which is a      measurement of the dollar's value relative to six foreign currencies as measured by their exchange rates.
+
+  - Cryptocurrency trading activity - this will be the trading volume of the top 5 crypto-currencies by market     capitalization: BTC, ETH, BNB, ADA, and XRP. USDT, although having a larger market cap than some of the        listed cryptos, is a stable coin and is likely to behave differently. For this fact, we excluded it at the     onset.
+
+Time period of analysis: 23 months, July 2019 - May 2021. 
+
+The Firm chose a 23-month time period as July 2019 is the earliest time period where The Firm could get a full set of data extracted from Twitter regarding influential individuals. 
+
+During the course of the data mining and analysis, The Firm discovered/faced some constraints to the data available, which contributed to a lack of data points for a robust analysis. This will be elaborated further below. 
+
+
+```{r}
+# Load necessary packages
+pacman::p_load(tidyverse, quantmod, rtweet, gtrendsR, lubridate, psych, jtools, RedditExtractoR, rvest)
+pacman::p_load(broom, gvlma, ggfortify, tidytext, ggstatsplot, reshape2, interactions, equatiomatic, sandwich, textdata)
+```
+
+## Import
+
+Then, we imported our dataset.
+
+```{r}
+## COLLECT & IMPORT DATA  ----
+
+#### Crypto ----
+
+BTC <- getSymbols("BTC-USD", auto.assign = F)
+ETH <- getSymbols("ETH-USD", auto.assign = F)
+
+#### USD Index ----
+
+USDX <- getSymbols("DX-Y.NYB", auto.assign = F)
+GOLD <- getSymbols("GC=F", auto.assign = F)
+RMB <- getSymbols("USDCNY=X", auto.assign = F)
+
+#### Twitter ----
+
+# twitter_token <- create_token(
+#  app = "abcd project", # Type your app name
+#  consumer_key = "qS0dRLdGXHscV06IdsmS1JtPu", # Type your consumer key
+#  consumer_secret = "xdhgMpkkknNldSEZLY7SuizUq3b1vWKDwTS8AjJSXSThFdmeT2", # Type your consumer secret
+#  set_renv = T)
+
+con_influencer_tweets <- # get_timelines(c("elonmusk", "CathieDWood", "novogratz", "michael_saylor", "jack"), n = 3200)
+read_rds("con_influencer_tweets.rds")
+
+cryp_influencer_tweets <- # get_timelines(c("VitalikButerin", "Bitboy_Crypto", "justinsuntron", "APompliano", "officialmcafee"), n = 3200)
+read_rds("cryp_influencer_tweets.rds")
+
+news_outlets_tweets <- # get_timelines(c("BBCBreaking", "cnnbrk", "nytimes", "DailyMailUK", "guardian", "FoxNews"), n = 3200)
+read_rds("news_outlets_tweets.rds")
+
+news_outlets_tweets2 <- # get_timelines(c("BBCWorld", "bloomberg", "FoxNews", "CNN", "CNBC", "FT", "Forbes"), n = 3200)
+read_rds("news_outlets_tweets2.rds")
+
+#### Reddit ----
+
+cryptocurrency_urls <- #reddit_urls("CryptoCurrency", page_threshold = 169) %>% as.tibble()
+  read_rds("crypto_urls.rds")
+
+cryptocurrency_comments <- #cryptocurrency_urls %>% 
+  #mutate(thread = map(cryptocurrency_urls$URL, ~ {
+  #Sys.sleep(5)
+  #reddit_content(.x) %>% as.tibble()})
+  #)
+  read_rds("cryptocurrency_comments.rds")
+  
+#### Gtrends ----
+
+coin_webtrend <- gtrends(keyword = c("bitcoin", "btc", "ethereum", "eth"),
+                         gprop = "web",
+                         geo = ,
+                         time = "2018-01-01 2021-06-05")$interest_over_time %>% 
+  as_tibble() %>% 
+  mutate(hits = as.numeric(hits)) %>% 
+  mutate(date = as_datetime(date))
+
+
+coin_youtubetrend <- gtrends(keyword = c("bitcoin", "btc", "ethereum", "eth"),
+                         gprop = "youtube",
+                         geo = ,
+                         time = "2018-01-01 2021-06-05")$interest_over_time %>% 
+  as_tibble() %>% 
+  mutate(date = as_datetime(date))
+
+```
+
+Different data sets were obtained:
+
+  1. Data on Crypto Trading
+  
+  Data on the top 5 cryptos were pulled from Yahoo Finance using the quantmod package. Looking at the data pulled, we found that volume traded for BTC and ETH were significantly higher than BNB, ADA, and XRP. Hence, we focused only on BTC and ETH. 
+  
+  2. Data on the Value of USD
+  
+  The USD index represents the strength of USD by valuing it against a basket of other foreign currencies. This data was also pulled using the quantmod package. 
+  
+  3. Twitter Timelines of Conventional Influencers, Crypto Influencers and Traditional News Outlets. 
+  
+  The idea was to look at how these parties influenced cryptos. We wanted to use the rtweets package to pull the timelines of the top 5 notable twitter handles that fell into the categories of (i) conventional influencers in the crypto space.  We term this group fo people as "Conventional Influencers"
+  This was based off articles published on these two information sources:-
+  - London post 
+  www.london-post.co.uk/the-top-3-crypto-influencers-who-make-new-waves-and-trends-in-the-market/
+  - Bloomberg 
+  www.bloomberg.com/news/articles/2021-05-19/what-elon-musk-cathie-wood-mike-novogratz-say-about-bitcoin-btc-collapse
+  
+  Next, people in the crypto space that have grown to become influencers, and this based off their total social following (twitter + instagram + youtube + tiktok). We term this group fo people as "Crypto Influencers"
+  The information source was based on:-
+  - CityAM
+  www.cityam.com/worlds-biggest-crypto-influencers-revealed-with-a-surprise-at-number-one/
+  
+  Lastly, news outlets, which was also based off the total monthly visits by users to their respective websites. 
+   We term this as "News Outlets". This was based off information from:-
+   - Press Gazette
+   pressgazette.co.uk/top-50-largest-news-websites-in-the-world-right-wing-outlets-see-biggest-growth/
+  
+  However, due to the restriction by twitter to only allow the last 3200 tweets, we faced issues with the timeline coverage. In what will be shown below (row 153 to 164, and row 218 to 251), many of the twitter handles of crpyto influencers and traditional news outlets output a lot of tweets and such that their 3200th tweet does not reach back to our intended start period of Jan 2020. Hence, we will only focus on using data from the list of conventional influencers, less elon musk, where we also faced the same issues in getting comprehensive tweet data.
+  
+  4. Gtrends 
+
+  Using gTrends package, we extracted queries on crypotcurrency primarily using four keywords that represented queries, or user search interest, in bitcoin and ethereum:-
+- Bitcoin keywords: "btc", "bitcoin" 
+- Ethereum keywords: "eth","ethereum"
+
+We then ran a quick visualization to get a sensing of the data. 
+
+  5. Reddit
+  
+  We believed that the activity or chatter on reddit may be well correlated with the volume of cryto traded as these individuals may frequent both trading platform and forum. To retrieve data from reddit, we attempted two methods: (i) Using the reddit API, RedditExtractoR and (ii) web-scraping of reddit directly. 
+  
+  We had some success with the reddit API. Although we are able pull relevant threads using the reddit_urls function, subsequently pull the comments using reddit_content function, and do a sentiment analysis on the comments, we faced a similar issue as with twitter. There seemed to be a limit on the number of urls that can be pulled using the reddit_urls function, being only able to pull 249 observations. This data set would then only stretch back to Apr 2021.
+  
+  We then sought to do a web scraping of reddit. We identified a thread on the "CryptoCurrency" subreddit, called "Daily Discussion" which is posted daily and has a high number of comments. Here is an example of the url "https://www.reddit.com/r/CryptoCurrency/comments/ol553c/daily_discussion_july_16_2021_gmt0/". On the surface, it seemed that it would be a good candidate since we can create a staging table and loop through the month, day, and year. However, there is a random string of alphanumeric characters within "...comments/XXXXX/daily_discussion..." which prevented this. Hence, the reddit dataset was also dropped. 
+
+
+```{r}
+## QUICK VISUALZATION ----
+
+#### Crypto and USDX ----
+
+table(USDX$`DX-Y.NYB.Close` == USDX$`DX-Y.NYB.Adjusted`)
+
+chartSeries(USDX['2019-07/2021-5'],
+            multi.col = F,
+            theme = 'white',
+            name = 'name')
+
+#### Twitter ----
+
+con_influencer_tweets %>% 
+  count(screen_name)
+
+con_influencer_tweets %>% 
+  select(created_at) %>% 
+  plot()
+
+con_influencer_tweets %>% 
+  group_by(screen_name) %>% 
+  filter(created_at == min(created_at))
+
+#### Reddit ----
+
+cryptocurrency_urls %>% 
+  mutate(date = dmy(date)) %>%
+  filter(date == min(date))
+
+```
+
+## Tidy & Transform
+
+We tidied our 3 different data sets. Largely, we tidied the data by grouped them by months and filtered for Jan 20 to May 21. Individual data sets for BTC and ETH were also combined. 
+
+For the twitter data sets. This was where we realized some of its additional deficiencies, such a few mentions of our key words, "bitcoin, btc, ethereum, eth" and that the tweets don't go back far enough. 
+
+```{r}
+## CLEANING ----
+
+#### Crypto and USDX ----
+
+BTC_clean <- BTC %>% 
+  as_tibble() %>% 
+  rename_with(., ~ gsub("BTC-USD.", "",.)) %>% 
+  mutate(thedate = index(BTC)) %>% 
+  drop_na() %>% 
+  filter(thedate >= as_date("2019-07-01") & thedate < as_date("2021-06-01")) %>% 
+  group_by(week = floor_date(thedate, unit = "week")) %>% 
+  summarize(volume = sum(Volume)/1000000000) %>% #trillion
+  mutate(type = "BTC")
+
+ETH_clean <- ETH %>% 
+  as_tibble() %>% 
+  rename_with(., ~ gsub("ETH-USD.", "",.)) %>% 
+  mutate(thedate = index(ETH)) %>% 
+  drop_na() %>% 
+  filter(thedate >= as_date("2019-07-01") & thedate < as_date("2021-06-01")) %>% 
+  group_by(week = floor_date(thedate, unit = "week")) %>% 
+  summarize(volume = sum(Volume)/1000000000) %>% 
+  mutate(type = "ETH")
+
+combined_volume <- BTC_clean %>% 
+  bind_rows(ETH_clean) %>% 
+  group_by(week) %>% #to summarise BTC and ETH together
+  summarize(volume = sum(volume)) 
+
+USDX_clean <- USDX %>% 
+  as_tibble() %>% 
+  rename_with(., ~ gsub("DX-Y.NYB.", "",.)) %>% 
+  mutate(thedate = index(USDX)) %>% 
+  drop_na() %>% 
+  filter(thedate >= as_date("2019-07-01") & thedate < as_date("2021-06-01")) %>% 
+  group_by(week = floor_date(thedate, unit = "week")) %>% 
+  summarize(USDXindex = mean(Adjusted)) 
+
+GOLD_clean <- GOLD %>% 
+  as_tibble() %>% 
+  rename_with(., ~ gsub("GC=F.", "",.)) %>% 
+  mutate(thedate = index(GOLD)) %>% 
+  drop_na() %>% 
+  filter(thedate >= as_date("2019-07-01") & thedate < as_date("2021-06-01")) %>%
+  #mutate(GOLD_volatility = High - Low) %>% 
+  group_by(week = floor_date(thedate, unit = "week")) %>% 
+  summarize(Gold_Price = mean(Adjusted)) 
+
+RMB_clean <- RMB %>% 
+  as_tibble() %>% 
+  rename_with(., ~ gsub("USDCNY=X.", "",.)) %>% 
+  mutate(thedate = index(RMB)) %>% 
+  drop_na() %>% 
+  filter(thedate >= as_date("2019-07-01") & thedate < as_date("2021-06-01")) %>% 
+  group_by(week = floor_date(thedate, unit = "week")) %>% 
+  summarize(RMBindex = mean(Adjusted)) 
+
+#### Twitter ----
+
+con_influencer_tweets_clean <- con_influencer_tweets %>% 
+  filter(screen_name != "elonmusk") %>% # Pulled elonmusk's tweets only go back until Jun 21. 
+  rowid_to_column(., "id") %>% 
+  select(id, created_at, text, screen_name) %>% 
+  filter(str_detect(text, c("bitcoin", "btc", "ethereum", "eth")) == T) %>% 
+  unnest_tokens(word, text) %>% 
+  anti_join(stop_words) %>% 
+  inner_join(get_sentiments("afinn"), by = "word") %>% 
+  filter(created_at >= as_date("2019-07-01") & created_at < as_date("2021-06-01")) %>% 
+  #select(created_at, word) %>% 
+  group_by(week = floor_date(created_at, unit = "week")) %>% 
+  summarise(tweets = sum(abs(value))) 
+# Only applied for this as it is the only dataset used
+
+con_influencer_tweets %>% 
+  filter(screen_name != "elonmusk") %>% # Pulled elonmusk's tweets only go back until Jun 21. 
+  rowid_to_column(., "id") %>% 
+  select(id, created_at, text, screen_name) %>% 
+  unnest_tokens(word, text) %>% 
+  filter(word %in% c("bitcoin", "btc", "ethereum", "eth")) %>% 
+  filter(created_at >= as_date("2019-07-01") & created_at < as_date("2021-06-01")) %>% 
+  select(created_at, word) %>% 
+  group_by(week = floor_date(created_at, unit = "week")) %>% 
+  count()
+
+cryp_influencer_tweets %>% 
+  unnest_tokens(word, text) %>% 
+  filter(word %in% c("bitcoin", "btc", "ethereum", "eth")) %>% 
+  select(created_at, word) %>% 
+  group_by(month = floor_date(created_at, unit = "month")) %>% 
+  count()
+# Only goes back until Jan 21
+
+news_outlets_tweets %>% 
+  unnest_tokens(word, text) %>% 
+  filter(word %in% c("bitcoin", "btc", "ethereum", "eth")) %>% 
+  select(created_at, word) %>% 
+  group_by(month = floor_date(created_at, unit = "month")) %>% 
+  count()
+# Very few observations
+
+news_outlets_tweets2 %>% 
+  unnest_tokens(word, text) %>% 
+  filter(word %in% c("bitcoin", "btc", "ethereum", "eth")) %>% 
+  select(created_at, word) %>% 
+  group_by(month = floor_date(created_at, unit = "month")) %>% 
+  count()
+
+#### Reddit ----
+
+cryptocurrency_comments_scored <- cryptocurrency_comments %>% 
+  mutate(sentiment_score = map(cryptocurrency_comments$thread, ~ {
+   (.x) %>% 
+      select(id, title, comment) %>% 
+      unnest_tokens(word, comment) %>% 
+      anti_join(stop_words) %>% 
+      inner_join(get_sentiments("afinn"), by = "word") %>% 
+      summarise(score = sum(abs(value))) %>% 
+      as.numeric()
+  })) %>% 
+  mutate(sentiment_score = as.numeric(sentiment_score)) %>% 
+  mutate(date = dmy(date)) %>% 
+  group_by(week = floor_date(date, unit = "week")) %>% 
+  summarise(weekly_score = sum(sentiment_score))
+# Very few observations
+
+#### Gtrends ----
+
+coin_webtrend_clean <- coin_webtrend %>% 
+  filter(date >= as_date("2019-07-01") & date < as_date("2021-06-01")) %>% 
+  drop_na() %>% 
+  group_by(date) %>% 
+  summarize(total_hits = sum(hits)) %>% 
+  rename(week = date)
+
+coin_youtubetrend_clean <- coin_youtubetrend %>% 
+  filter(date >= as_date("2019-07-01") & date < as_date("2021-06-01")) %>% 
+  drop_na() %>% 
+  group_by(date) %>% 
+  summarize(total_hits = sum(as.numeric(hits))) %>% 
+  rename(week = date)
+```
+
+## Visualization
+
+Running a general visualization, we can see that there seems to be a possible positive relationship between the rising sentiment activity in tweets, web searches and youtube searches on the trading activity of crypto. The rising price of gold, and weakening of the USD and RMB values seem to go hand in hand with the increased trading interest in crypto.
+
+We combiend all the variables into one dataset and normalized the values for consistency. 
+
+
+```{r}
+
+## DATA VISUALIZATION ----
+
+#### Crypto ----
+
+combined_volume_plot <- combined_volume %>% 
+  ggplot(aes(x = week, y = volume)) +
+  geom_point() +
+  geom_smooth(formula = y ~ x, method = "loess") +
+  labs(x = "Week", 
+       y = "Combined Volume of\n Trades (Trillion)") +
+  theme(text = element_text(size=8))
+
+BTC_clean %>% 
+  add_row(ETH_clean) %>% 
+  ggplot(aes(x = week, y = volume)) +
+  geom_point(aes(color = type)) 
+# Volumes are not too far apart
+
+USDX_clean_plot <- USDX_clean %>% 
+  ggplot(aes(x = week, y = USDXindex)) +
+  geom_point() +
+  geom_smooth(formula = y ~ x, method = "loess") +
+  labs(x = "Week", 
+       y = "USDX Index Value")
+
+gridExtra::grid.arrange(combined_volume_plot, USDX_clean_plot)
+# Inverse relationship observed 
+
+#### Twitter ----
+
+con_influencer_tweets_clean_plot <- con_influencer_tweets_clean %>% 
+  ggplot(aes(x = week, y = tweets)) +
+  geom_point() +
+  geom_smooth(formula = y ~ x, method = "loess") +
+  labs(x = "Week", 
+       y = "Sentiments of Tweets",
+       caption = "Source: Yahoo Finance, Google Trends, and Twitter") +
+  theme(text = element_text(size=8))
+
+#### Gtrends ----
+
+coin_webtrend %>%
+  filter(date >= as_date("2019-07-01") & date < as_date("2021-06-01")) %>% 
+  drop_na() %>% 
+  ggplot(aes(x = date, y = hits)) +
+  geom_point(aes(color = keyword, size = hits)) 
+
+coin_webtrend_clean_plot <- coin_webtrend_clean  %>% 
+  ggplot(aes(x = week, y = total_hits)) +
+  geom_point() +
+  geom_smooth(formula = y ~ x, method = "loess") +
+  labs(title = "Relationship of volume of BTC & ETH trades, their search volumes, and\n tweet volume with Time",
+       subtitle = "Seem to have some correlation between volume of trades, search volume, and tweet volume",
+       x = "Week", 
+       y = "Relative Search\n Volume on Google") +
+  theme(text = element_text(size=8))
+
+#### Combined ----
+
+gridExtra::grid.arrange(coin_webtrend_clean_plot,
+                        combined_volume_plot, 
+                        con_influencer_tweets_clean_plot)
+
+#### Additional Cleaning and Visualization ----
+
+allin <- left_join(combined_volume, con_influencer_tweets_clean, by = "week") %>% 
+  left_join(coin_webtrend_clean, by = "week") %>% 
+  left_join(coin_youtubetrend_clean, by = "week") %>%  
+  left_join(USDX_clean, by = "week") %>%  
+  left_join(RMB_clean, by = "week") %>%  
+  left_join(GOLD_clean, by = "week") %>%  
+  rename_at(colnames(.), ~ c("Week", "Trade_Volume", "Tweet_Sentiments", "Webtrend_Hits", "Youtubetrend_Hits", "USDX_Index", "RMB_Index", "Gold_Price"))
+
+allin_normalized <- allin %>% 
+  mutate_at(c("Trade_Volume", "Tweet_Sentiments", "Webtrend_Hits", "Youtubetrend_Hits", "USDX_Index", "RMB_Index", "Gold_Price"), ~(scale(.) %>% as.vector)) 
+
+allin_normalized %>% 
+  melt(id = "Week") %>% 
+  ggplot(aes(x = Week, y = value)) +
+  geom_point(aes(color = variable)) +
+  geom_smooth(formula = y ~ x, method = "loess") +
+  facet_grid(. ~ variable) +
+  theme(legend.position = "none",
+        text = element_text(size=8),
+        axis.text.x = element_text(angle=45, hjust=1)) +
+  scale_x_datetime(date_breaks = "4 month",
+                   date_labels = "%Y %b") +
+  labs(title = "Relationship of volume of BTC & ETH trades, and all the other variables",
+       subtitle = "Can't quite tell any relationship from the visualization",
+       caption = "Source: Yahoo Finance, Google Trends, and Twitter",
+       y = "Normalized Value")
+
+allin_normalized %>% 
+  select(!Week) %>% 
+  melt(id = "Trade_Volume") %>% 
+  ggplot(aes(x = value, y = Trade_Volume)) +
+  geom_point(aes(color = variable)) +
+  geom_smooth(formula = y ~ x, method = "lm") +
+  facet_grid(. ~ variable) +
+  theme(legend.position = "none") 
+
+
+```
+
+
+## Model Preparation
+
+For the preparation of the model: 
+
+  1. Reliability test using Cronbach's Alpha - Poor raw_alpha but good std.alpha (alpha > 0.7)
+  
+  2. Correlational matrix - Generally high r values
+
+```{r}
+
+#### Reliability ----
+
+allin_normalized %>% 
+  select(!Week) %>% 
+  alpha(., check.keys = TRUE)
+# Poor raw_alpha but good std.alpha (alpha > 0.7, except Tweet_Sentiments, Gold_Price)
+
+#### Correlation Matrix ----
+
+allin_normalized %>% 
+  select(!Week) %>% 
+  as.matrix(.) %>% 
+  Hmisc::rcorr(.) %>% 
+  broom::tidy(.) %>% 
+  filter(column2 == "Trade_Volume") 
+# Trade volume seem to be well correlated with Webtrend_Hits, Youtubetrend_Hits, USDX_Index, and RMB_Index
+
+```
+
+## Model 
+
+Our model regressed GOLD, RMB, USDX, web search queries (Gtrends hits), tweet volume and youtube searches (Youtube search queries) onto trade volume of crypto. 
+
+All components of gvlma has acceptable assumptions.
+
+```{r}
+#### Modeling ----
+
+model_allin <- allin_normalized %>% 
+  select(!Week) %>% 
+  lm(formula = Trade_Volume ~ Tweet_Sentiments + Webtrend_Hits + Youtubetrend_Hits +
+       USDX_Index + RMB_Index + Gold_Price)
+
+autoplot(gvlma(model_allin))
+# All components passed
+```
+
+Our model has an r^2 that is high (>0.85) with the estimate +/- CI of the model not include 0.
+
+It appears that only RMB, USDX and web search queries display significant effects on the trading activity of crypto.
+
+```{r}
+tidy(model_allin);glance(model_allin)
+
+export_summs(model_allin, error_format = "[{conf.low}, {conf.high}]", ci_level = 0.95, 
+     digits=3)
+
+#### Visualization of the Model ----
+
+plot_summs(model_allin, scale = T, plot.distributions = T, robust = list(F, "HC3"))
+
+#### Assess Multicollinearity ----
+
+summ(model_allin, scale = T, vifs = T, confint = T , digits = 4)
+# Webtrend_Hits, Youtubetrend_Hits, USDX_Index, RMB_Index all have high VIF values of > 10 indicating high multicolinearity. We will be probing for interaction effects from these variables. 
+
+extract_eq(model_allin)
+
+```
+
+## Model Equation
+
+$$
+\operatorname{Trade\_Volume} = \alpha + \beta_{1}(\operatorname{Tweet\_Sentiments}) + \beta_{2}(\operatorname{Webtrend\_Hits}) + \beta_{3}(\operatorname{Youtubetrend\_Hits}) + \beta_{4}(\operatorname{USDX\_Index}) + \beta_{5}(\operatorname{RMB\_Index}) + \beta_{6}(\operatorname{Gold\_Price}) + \epsilon
+$$
+
+
+### Report the Results with `kable` in `R Markdown`
+
+> Prof. Roh's Note: "Now that the assumption check is done, you might want to put the results into a prettier format of table. The default print-out of table in `R Markdown` does not look good. The `knitr` package contains a very basic command, `kable`, which will format an array or data frame more presentable for display. Thus, use the following for your report."
+
+```{r, align = "center"}
+library(knitr) # Please install the package "knitr" first.
+
+library(kableExtra) # You might want to use package "kableExtra" as well.
+
+kable(tidy(model_allin), table.attr = "style = \"color: black;\"")%>%
+  kable_styling("striped", full_width = T, fixed_thead = T) %>%
+  column_spec(c(1, 5), bold = T) %>%
+  row_spec(c(2, 4, 6), bold = T, color = "white", background = "#ff6347") 
+
+kable(glance(model_allin), table.attr = "style = \"color: black;\"")%>%
+  kable_styling("striped", full_width = T, font_size = 12) %>%
+  column_spec(c(2, 4, 6, 8, 10, 12), bold = T, color = "white", background = "#ff6347") 
+```
+
+Based on this we shortlisted the variables that display significant effects, and probed for interaction effects between them, namely RMB_Index, USDX_Index, and Webtrend_Hits on the rest of our variables individually. This is reflected in Parts 1-3 respectively. 
+
+### Part 1: RMB_Index * (Webtrend_Hits + Youtubetrend_Hits + Tweet_Sentiments + USDX_Index + Gold_Price)
+
+To visualize the OLS regression analysis performed above, we stored the OLS regression model’s predictions. The analysis showed that the other variables had no interaction effect with RMB_Index. 
+
+```{r}
+
+model2_allin <- allin_normalized %>% 
+  select(!Week) %>% 
+  lm(formula = Trade_Volume ~ RMB_Index * (Webtrend_Hits + Youtubetrend_Hits + Tweet_Sentiments + USDX_Index + Gold_Price))
+
+tidy(model2_allin);glance(model2_allin)
+
+export_summs(model2_allin, error_format = "[{conf.low}, {conf.high}]", ci_level = 0.95, 
+     digits=3)
+
+#### Visualization of the Model ----
+
+plot_summs(model2_allin, scale = T, plot.distributions = T, robust = list(F, "HC3"))
+
+```
+
+
+### Part 2: USDX_Index * (Gold_Price + RMB_Index + Webtrend_Hits + Youtubetrend_Hits + Tweet_Sentiments)
+
+To visualize the OLS regression analysis performed above, we stored the OLS regression model’s predictions. THe analysis showed that there was an interaction effect between Tweet_Sentiments and USDX_Index. However on further probing, at all values of USDX_Index, there was no interaction effect of Tweet_Sentiments. 
+
+```{r}
+
+model3_allin <- allin_normalized %>% 
+  select(!Week) %>% 
+  lm(formula = Trade_Volume ~ USDX_Index * (Gold_Price + RMB_Index + Webtrend_Hits + Youtubetrend_Hits + Tweet_Sentiments))
+
+export_summs(model3_allin, error_format = "[{conf.low}, {conf.high}]", ci_level = 0.95, 
+     digits=3)
+
+plot_summs(model3_allin, scale = T, plot.distributions = T, robust = list(F, "HC3"))
+
+#### Step 1: Plot Interaction (Tweet_Volume) ----
+
+interact_plot(model3_allin, 
+              pred = "USDX_Index", 
+              modx = "Tweet_Sentiments",
+              plot.points = TRUE, 
+              interval = T, 
+              int.width = 0.95, 
+              colors = c("skyblue", 
+                         "red",
+                         "lightgreen"),
+              vary.lty = T)
+
+#### Step 2: Run Simple Slopes Analysis ----
+
+sim_slopes(model3_allin, 
+           pred = USDX_Index, 
+           modx = Tweet_Sentiments,
+           johnson_neyman = F)
+# When Tweet_Sentiments is high, there is significant effect of USDX_Index on Trade_Volume
+
+#### Step 3: Spotlight Analysis ----
+
+sim_slopes(model3_allin,
+           pred = Tweet_Sentiments, 
+           modx = USDX_Index,
+           johnson_neyman = T)# give you J-N interval calculation
+
+# Step 4: Run interaction_plot() again by adding benchmark for regions of significance
+
+interact_plot(model3_allin, 
+              pred = USDX_Index, 
+              modx = Tweet_Sentiments, 
+              interval = T, 
+              int.width = 0.95, 
+              colors = c("skyblue", 
+                         "red",
+                         "lightgreen"),
+              vary.lty = T,
+              plot.points = T) +
+  geom_vline(xintercept = -2.50, color = "red", size = 1) +
+  geom_vline(xintercept = 7.19, color = "red", size = 1) +
+  annotate("text",
+           x = 0.2,
+           y = 3,
+           label = "The shaded areas denote the boundary\nbetween regions of significance and\nnon-significance based on alpha at 5%",
+           size=2) +
+  annotate("rect",
+           fill = "grey",
+           alpha = 0.2,
+           xmin = -2.50,
+           xmax = 7.19,
+           ymin = -1,
+           ymax = 3) + 
+  labs(title = "The Interplay of USDX_Index and Tweet_Sentiments on Trade Volume",
+       subtitle = "At all observed values of USDX_Index [-1.66, 1.64], Tweet_Sentiments have no significant interaction effect.",
+       caption = "Source: Your Dataset") + 
+  ggthemes::theme_fivethirtyeight() +
+  theme(legend.position = "top",
+        axis.title = element_text(),
+        text = element_text(size=8))
+
+```
+
+
+### Part 3: Webtrend_Hits * (Gold_Price + RMB_Index + USDX_Index + Youtubetrend_Hits + Tweet_Sentiments)
+
+To visualize the OLS regression analysis performed above, we stored the OLS regression model’s predictions. The analysis showed that the other variables had no interaction effect with Webtrend_Hits. 
+
+```{r}
+
+model4_allin <- allin_normalized %>% 
+  select(!Week) %>% 
+  lm(formula = Trade_Volume ~ Webtrend_Hits * (Gold_Price + RMB_Index + USDX_Index + Youtubetrend_Hits + Tweet_Sentiments))
+
+export_summs(model4_allin, error_format = "[{conf.low}, {conf.high}]", ci_level = 0.95, 
+     digits=3)
+
+plot_summs(model4_allin, scale = T, plot.distributions = T, robust = list(F, "HC3"))
+#no interaction effect of other variables on Webtrend_Hits
+
+
+```
+
+## Interpretation of the Results
+
+From our data science project, we could find the following two findings:
+
+#From our Visualizations
+
+Sentiments signified by web searches and youtube searches, together with speculative forces caused by influential individual tweeting on crypto,  seem to collectively have a positive relationship with the trading activity of crypto, whilst the value of the USD index and RMB index seem to be a inverse relationships on the trading activity of crypto. The prices of GOLD too, looks to have a positive relationship on trading interest around crypto. This is shown by our visualization in row 457.
+
+#From our Main Effects Model
+
+However, from our modeling, it was shown that only USD index, RMB index, and web searches on crypto have a significant relationship with crypto trading volume (row 514). For RMB Index, our hypothesis that a decreasing value of RMB would push investors to store their wealth in alternative investments like crypto as a hedge. This was supported by our model as well as our visualization in row 457. What was odd was that we believed this would be the same trend for USDX index. However, this was not the case in our model, as the model estimate for USDX index was positive, despite a negative correlation seen in visualization in row 457.  For web searches, it was also logical that increased searches would be positively correlated with crypto trading volume. The fact that web searches had a correlation with crypto trading volume and not youtube searches or sentiments on twitter, suggested that the web still remains as a more prominent source of crypto information. For gold price, our hypothesis was that there would be a negative correlation with crypto as bitcoin is largely seen as digital gold and is believed to cannibalize on the gold market. However this does not appear to be the case.  
+
+## Implications
+
+It is likely that the Federal Reserve’s monetary policies had any some effect on Tweet sentiments and social media chatter. However there is a significant effect of USDX on crypto interest and trading activity, but in a counterintuitive manner where a decrease in USD index is correlated with a decrease crypto trading volume.  This could suggest that the FED’s monetary policies did not spur interest in cryptos. The FED can be assured that cryptocurrency in the current climate is unlikely to overtake or replace the value of the USD as they are not inversely correlated.
+
+
+## Limitations and Future Directions
+
+One of the limitations we faced was the inability to obtain a comprehensive dated set of Twitter data from the handles of media news outlets. Reason being the volume of tweets for media news outlets was frequently high. Hence the desired start date of  tweet data mining was limited by the cap of 3,200 tweets allowed for data pulling imposed by the twitter API. 
+
+Furthermore, our studies only look at correlation and not causality.
+
+Additional studies need to be conducted to to determine causation, such as the application of statistical procedures like Difference in Differences (DID), Causal Impact, or Synthetic Control.
+
+
+## References
+
+Yahoo Finance
+Gtrends
+Twitter
+Bloomberg
+Press Gazette
+CityAM
+London Post
+
+## Appendix
+
+> Appendix
+
+## Contribution Statement
+
+Thanks Prof!
