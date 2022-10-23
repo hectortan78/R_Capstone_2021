@@ -2,7 +2,7 @@
 Observing Interplay Between Cryptocurrencies Trading Activity, Market Sentiments, and US Fiscal Stimulus
 
 - To discern if the volume of cryptocurrency trading activity is directly or indirectly affected by social media buzz and influencers
-- Scraped Google Search, Yahoo, Reddit, Twitter
+- Scraped gTrends, Yahoo, Reddit, Twitter
 
 
 
