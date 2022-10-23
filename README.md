@@ -1,2 +1,2 @@
 # R_capstone
-Capstone project done using R 
+Observing Interplay Between Cryptocurrencies Trading Activity, Market Sentiments, and US Fiscal Stimulus
